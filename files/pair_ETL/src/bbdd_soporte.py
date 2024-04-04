@@ -69,3 +69,27 @@ def insertar_datos(query,contraseña,nombre_bbdd, lista_tuplas):
             print("SQLSTATE", err.sqlstate)
             print("Message", err.msg)
             cnx.close()
+
+
+def insertar_datos(query, contraseña, nombre_bbdd, lista_tuplas):
+   
+    cnx = mysql.connector.connect(
+        user="root", 
+        password=contraseña, 
+        host="127.0.0.1", database=nombre_bbdd
+    )
+
+    mycursor = cnx.cursor()
+
+    try:
+        mycursor.executemany(query, lista_tuplas)
+        cnx.commit()
+        print(mycursor.rowcount, "registro/s insertado/s.")
+        cnx.close()
+
+    except mysql.connector.Error as err:
+        print(err)
+        print("Error Code:", err.errno)
+        print("SQLSTATE", err.sqlstate)
+        print("Message", err.msg)
+        cnx.close()

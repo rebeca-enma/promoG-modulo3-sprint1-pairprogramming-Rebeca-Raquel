@@ -44,22 +44,48 @@ sp.exploracion_col_df(df_productos)
 
 ## Union DF
 df_mergeado = sp.union_datos(df_clientes,df_ventas,df_productos)
+df_mergeado
 
-#creamos las tablas en nuestra bbdd
+#%%
+#creamos la bbdd
 bbdd.creacion_bbdd_tablas (sq.query_creacion_bbdd, 'AlumnaAdalab', 'tienda_pair')
+
+#creamos las tablas de la bbdd
 # %%
 bbdd.creacion_bbdd_tablas (sq.query_creacion_tabla_ventas, 'AlumnaAdalab')
 bbdd.creacion_bbdd_tablas (sq.query_creacion_tabla_clientes, 'AlumnaAdalab')
 bbdd.creacion_bbdd_tablas (sq.query_creacion_tabla_productos, 'AlumnaAdalab')
 bbdd.creacion_bbdd_tablas (sq.query_creacion_productos_ventas, 'AlumnaAdalab')
 # %%
-#insertamos las tablas
-bbdd.insertar_datos (sq.query_insertar_productos_ventas, 'AlumnaAdalab', 'tienda_pair')
-bbdd.insertar_datos (sq.query_insertar_productos, 'AlumnaAdalab', 'tienda_pair')
-bbdd.insertar_datos (sq.query_insertar_ventas, 'AlumnaAdalab', 'tienda_pair')
-bbdd.insertar_datos (sq.query_insertar_clientes, 'AlumnaAdalab', 'tienda_pair')
+
+# Crear las listas de tuplas con la información a insertar en cada tabla
+#%%
+# TABLA CLIENTES
+datos_tabla_clientes = list(set(zip(df_mergeado["id_cliente"].values, df_mergeado["first_name"].values, df_mergeado["last_name"].values, df_mergeado["email"].values, df_mergeado["gender"].values, df_mergeado["city"].values, df_mergeado["country"].values, df_mergeado["address"].values)))
+
+
+#%%
+# TABLA VENTAS
+datos_tabla_ventas = list(set(zip(df_mergeado["id_producto"].values, df_mergeado["id_cliente"].values, df_mergeado["fecha_venta"].values, df_mergeado["cantidad"].values, df_mergeado["total"].values)))
+datos_tabla_ventas
+#%%
+# TABLA PRODUCTOS
+datos_tabla_productos = list(set(zip(df_mergeado["id_producto"].values, df_mergeado["nombre_producto"].values, df_mergeado["categoría"].values, df_mergeado["precio"].values, df_mergeado["origen"].values, df_mergeado["descripción"].values)))
+datos_tabla_productos
+#%%
+#TABLA PRODUCTOS VENTAS
+datos_tabla_productos_ventas = list(set(zip(df_mergeado["id_producto"].values)))
+datos_tabla_productos_ventas
+
+#%%
+#insertamos los datos en nuestra bbdd
+bbdd.insertar_datos (sq.query_insertar_productos_ventas, 'AlumnaAdalab', 'tienda_pair', datos_tabla_productos_ventas)
+#%%
+bbdd.insertar_datos (sq.query_insertar_productos, 'AlumnaAdalab', 'tienda_pair', datos_tabla_productos)
+#%%
+bbdd.insertar_datos (sq.query_insertar_ventas, 'AlumnaAdalab', 'tienda_pair', datos_tabla_ventas)
+#%%
+bbdd.insertar_datos (sq.query_insertar_clientes, 'AlumnaAdalab', 'tienda_pair', datos_tabla_clientes)
 # %%
 df_mergeado.columns
 
-#%%
-datos_tabla_productos_ventas = list(set(zip(df_mergeado["uri_cancion"].values, df_mergeado["song"].values)))
